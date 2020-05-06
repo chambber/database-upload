@@ -11,6 +11,7 @@ import DeleteTransactionService from '../services/DeleteTransactionService';
 import ImportTransactionsService from '../services/ImportTransactionsService';
 
 const transactionsRouter = Router();
+const upload = multer(uploadConfig);
 
 transactionsRouter.get('/', async (request, response) => {
   const transactionsRepository = getCustomRepository(TransactionsRepository);
@@ -43,8 +44,20 @@ transactionsRouter.delete('/:id', async (request, response) => {
   const deleteTransactionService = new DeleteTransactionService();
   await deleteTransactionService.execute(id);
 
-transactionsRouter.post('/import', async (request, response) => {
-  // TODO
+  return response.sendStatus(204);
 });
+
+transactionsRouter.post(
+  '/import',
+  upload.single('file'),
+  async (request, response) => {
+    const { path } = request.file;
+
+    const importTransactionsService = new ImportTransactionsService();
+    const transactions = await importTransactionsService.execute(path);
+
+    return response.json(transactions);
+  },
+);
 
 export default transactionsRouter;
