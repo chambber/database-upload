@@ -38,8 +38,10 @@ transactionsRouter.post('/', async (request, response) => {
 });
 
 transactionsRouter.delete('/:id', async (request, response) => {
-  // TODO
-});
+  const { id } = request.params;
+
+  const deleteTransactionService = new DeleteTransactionService();
+  await deleteTransactionService.execute(id);
 
 transactionsRouter.post('/import', async (request, response) => {
   // TODO
